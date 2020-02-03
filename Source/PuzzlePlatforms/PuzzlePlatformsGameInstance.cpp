@@ -5,7 +5,7 @@
 #include "Engine/Engine.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/UserWidget.h"
-#include "Menu/MainMenu.h"
+#include "Menu/MenuWidget.h"
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer &ObjectInitializer) {
     static ConstructorHelpers::FClassFinder<UUserWidget> MainMenuBPClass(TEXT("/Game/Menu/WBP_MainMenu"));
@@ -13,28 +13,34 @@ UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitiali
 	{
 		MainMenuClass = MainMenuBPClass.Class;
 	}
+    static ConstructorHelpers::FClassFinder<UUserWidget> InGameMenuBPClass(TEXT("/Game/Menu/WBP_InGameMenu"));
+    if (InGameMenuBPClass.Class) {
+        InGameMenuClass = InGameMenuBPClass.Class;
+    }
 }
 
 void UPuzzlePlatformsGameInstance::Init() {
     Super::Init();
 }
 
-void UPuzzlePlatformsGameInstance::LoadMenu() {
+void UPuzzlePlatformsGameInstance::LoadMainMenu() {
     if (MainMenuClass) {
-        auto MenuWidget = CreateWidget<UMainMenu>(this, MainMenuClass);
+        MainMenu = CreateWidget<UMenuWidget>(this, MainMenuClass);
 
-        if (MenuWidget) {
-            MenuWidget->AddToViewport();
-            MenuWidget->SetMainMenuInterface(this);
+        if (MainMenu) {
+            MainMenu->Setup();
+            MainMenu->SetMenuInterface(this);
+        }
+    }
+}
 
-            APlayerController *PlayerController = GetFirstLocalPlayerController();
-            if (PlayerController) {
-                FInputModeUIOnly InputMode;
-                InputMode.SetWidgetToFocus(MenuWidget->TakeWidget());
-                InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-                PlayerController->SetInputMode(InputMode);
-                PlayerController->bShowMouseCursor = true;
-            }
+void UPuzzlePlatformsGameInstance::LoadInGameMenu() {
+    if (InGameMenuClass) {
+        InGameMenu = CreateWidget<UMenuWidget>(this, InGameMenuClass);
+        
+        if (InGameMenu) {
+            InGameMenu->Setup();
+            InGameMenu->SetMenuInterface(this);
         }
     }
 }
@@ -43,11 +49,32 @@ void UPuzzlePlatformsGameInstance::HostButtonClicked() {
     Host();
 }
 
-void UPuzzlePlatformsGameInstance::JoinButtonClicked() {
+void UPuzzlePlatformsGameInstance::JoinButtonClicked(const FString &Address) {
+    Join(Address);
+}
 
+void UPuzzlePlatformsGameInstance::QuitButtonClicked() {
+    APlayerController *PlayerController = GetFirstLocalPlayerController();
+    if (PlayerController) {
+        PlayerController->ClientTravel("/Game/Maps/MainMenu", ETravelType::TRAVEL_Absolute);
+    }
+}
+
+void UPuzzlePlatformsGameInstance::ExitButtonClicked() {
+    APlayerController *PlayerController = GetFirstLocalPlayerController();
+    if (PlayerController) {
+        if (MainMenu) {
+            MainMenu->Teardown();
+        }
+        PlayerController->ConsoleCommand("quit");
+    }
 }
 
 void UPuzzlePlatformsGameInstance::Host() {
+    if (MainMenu) {
+        MainMenu->Teardown();
+    }
+
     UEngine *Engine = GetEngine();
     if (Engine) {
         Engine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Green, FString("Hosting"));
@@ -60,6 +87,10 @@ void UPuzzlePlatformsGameInstance::Host() {
 }
 
 void UPuzzlePlatformsGameInstance::Join(const FString &Address) {
+    if (MainMenu) {
+        MainMenu->Teardown();
+    }
+    
     UEngine *Engine = GetEngine();
 
     if (Engine) {

@@ -3,10 +3,9 @@
 
 #include "MainMenu.h"
 #include "Components/Button.h"
-
-void UMainMenu::SetMainMenuInterface(IMainMenuInterface *InterfaceToSet) {
-    MainMenuInterface = InterfaceToSet;
-}
+#include "Components/WidgetSwitcher.h"
+#include "Components/EditableText.h"
+#include "Engine/World.h"
 
 bool UMainMenu::Initialize() {
     if (Super::Initialize()) {
@@ -16,7 +15,16 @@ bool UMainMenu::Initialize() {
         if (JoinButton) {
             JoinButton->OnClicked.AddDynamic(this, &UMainMenu::JoinButtonClicked);
         }
-        
+        if (JoinJoinMenuButton) {
+            JoinJoinMenuButton->OnClicked.AddDynamic(this, &UMainMenu::JoinJoinMenuButtonClicked);
+        }
+        if (CancelJoinMenuButton) {
+            CancelJoinMenuButton->OnClicked.AddDynamic(this, &UMainMenu::CancelJoinMenuButtonClicked);
+        }
+        if (ExitButton) {
+            ExitButton->OnClicked.AddDynamic(this, &UMainMenu::ExitButtonClicked);
+        }
+
         return true;
     } else {
         return false;
@@ -24,13 +32,31 @@ bool UMainMenu::Initialize() {
 }
 
 void UMainMenu::HostButtonClicked() {
-    if (MainMenuInterface) {
-        MainMenuInterface->HostButtonClicked();
+    if (MenuInterface) {
+        MenuInterface->HostButtonClicked();
     }
 }
 
 void UMainMenu::JoinButtonClicked() {
-    if (MainMenuInterface) {
-        MainMenuInterface->JoinButtonClicked();
+    if (MenuSwitcher && JoinMenu) {
+        MenuSwitcher->SetActiveWidget(JoinMenu);
+    }
+}
+
+void UMainMenu::JoinJoinMenuButtonClicked() {
+    if (MenuInterface && AddressTextBox) {
+        MenuInterface->JoinButtonClicked(AddressTextBox->GetText().ToString());
+    }
+}
+
+void UMainMenu::CancelJoinMenuButtonClicked() {
+    if (MenuSwitcher && MainMenu) {
+        MenuSwitcher->SetActiveWidget(MainMenu);
+    }
+}
+
+void UMainMenu::ExitButtonClicked() {
+    if (MenuInterface) {
+        MenuInterface->ExitButtonClicked();
     }
 }

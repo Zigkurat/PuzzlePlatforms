@@ -20,5 +20,9 @@ class PUZZLEPLATFORMS_API IMainMenuInterface
 public:
 	virtual void HostButtonClicked() = 0;
 
-	virtual void JoinButtonClicked() = 0;
+	virtual void JoinButtonClicked(const FString &Address) = 0;
+
+	virtual void QuitButtonClicked() = 0;
+
+	virtual void ExitButtonClicked() = 0;
 };
