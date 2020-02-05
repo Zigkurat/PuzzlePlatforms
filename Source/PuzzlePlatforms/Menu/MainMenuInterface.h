@@ -22,7 +22,11 @@ public:
 
 	virtual void JoinButtonClicked(const FString &Address) = 0;
 
+	virtual void JoinButtonClicked(uint32 Index) = 0;
+
 	virtual void QuitButtonClicked() = 0;
 
 	virtual void ExitButtonClicked() = 0;
+
+	virtual void RefreshServerList() = 0;
 };
