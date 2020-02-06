@@ -6,9 +6,16 @@
 #include "Blueprint/UserWidget.h"
 #include "ServerListItem.generated.h"
 
-/**
- * 
- */
+USTRUCT()
+struct FServerData {
+	GENERATED_BODY()
+
+	FString Name;
+	FString HostUsername;
+	uint32 CurrentPlayers;
+	uint32 MaxPlayers;
+};
+
 UCLASS()
 class PUZZLEPLATFORMS_API UServerListItem : public UUserWidget
 {
@@ -17,6 +24,12 @@ class PUZZLEPLATFORMS_API UServerListItem : public UUserWidget
 public:
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock *ServerName;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock *HostUsername;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock *PlayerSlots;
 
 	UPROPERTY(BlueprintReadOnly)
 	bool IsSelected = false;

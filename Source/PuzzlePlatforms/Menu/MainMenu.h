@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "MenuWidget.h"
+#include "ServerListItem.h"
 #include "MainMenu.generated.h"
 
 UCLASS()
@@ -61,7 +62,7 @@ private:
 	TOptional<uint32> SelectedIndex;
 
 public:
-	void SetServerList(TArray<FString> ServerNames);
+	void SetServerList(TArray<FServerData> ServerDataList);
 
 	void SelectIndex(uint32 Index);
 

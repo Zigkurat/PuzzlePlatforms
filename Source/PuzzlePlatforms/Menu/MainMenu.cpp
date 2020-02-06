@@ -9,7 +9,6 @@
 #include "Engine/World.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/UserWidget.h"
-#include "ServerListItem.h"
 
 UMainMenu::UMainMenu(const FObjectInitializer &ObjectInitializer) {
     static ConstructorHelpers::FClassFinder<UUserWidget> ServerListItemBPClass(TEXT("/Game/Menu/WBP_ServerListItem"));
@@ -19,14 +18,16 @@ UMainMenu::UMainMenu(const FObjectInitializer &ObjectInitializer) {
 	}
 }
 
-void UMainMenu::SetServerList(TArray<FString> ServerNames) {
+void UMainMenu::SetServerList(TArray<FServerData> ServerDataList) {
     if (ServerList) {
         ServerList->ClearChildren();
         uint32 Index = 0;
-        for (const auto &ServerName : ServerNames) {
+        for (const auto &ServerData : ServerDataList) {
             auto ServerListItem = CreateWidget<UServerListItem>(this, ServerListItemClass);
             if (ServerListItem) {
-                ServerListItem->ServerName->SetText(FText::FromString(ServerName));
+                ServerListItem->ServerName->SetText(FText::FromString(ServerData.Name));
+                ServerListItem->HostUsername->SetText(FText::FromString(ServerData.HostUsername));
+                ServerListItem->PlayerSlots->SetText(FText::FromString(FString::Printf(TEXT("%d/%d"), ServerData.CurrentPlayers, ServerData.MaxPlayers)));
                 ServerListItem->Setup(this, Index);
                 
                 ServerList->AddChild(ServerListItem);
