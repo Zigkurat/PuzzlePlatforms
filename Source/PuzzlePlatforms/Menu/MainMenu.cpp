@@ -39,6 +39,13 @@ void UMainMenu::SetServerList(TArray<FString> ServerNames) {
 
 void UMainMenu::SelectIndex(uint32 Index) {
     SelectedIndex = Index;
+
+    for (uint32 i = 0; i < ServerList->GetChildrenCount(); i++) {
+        UServerListItem *Item = Cast<UServerListItem>(ServerList->GetChildAt(i));
+        if (Item) {
+            Item->IsSelected = i == Index;
+        }
+    }
 }
 
 bool UMainMenu::Initialize() {

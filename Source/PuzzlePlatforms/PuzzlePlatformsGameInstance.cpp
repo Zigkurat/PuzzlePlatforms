@@ -173,6 +173,10 @@ void UPuzzlePlatformsGameInstance::OnDestroySessionComplete(FName SessionName, b
 void UPuzzlePlatformsGameInstance::OnFindSessionsComplete(bool Success) {
     if (SessionSearch.IsValid() && Success && MainMenu) {
         TArray<FString> ServerNames;
+        ServerNames.Add("First");
+        ServerNames.Add("Second");
+        ServerNames.Add("Third");
+        ServerNames.Add("Fourth");
         for (const auto &SearchResult : SessionSearch->SearchResults) {
             ServerNames.Add(SearchResult.GetSessionIdStr());
         }

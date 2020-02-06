@@ -18,6 +18,9 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock *ServerName;
 
+	UPROPERTY(BlueprintReadOnly)
+	bool IsSelected = false;
+
 private:
 	UPROPERTY(meta = (BindWidget))
 	class UButton *SelectButton;
