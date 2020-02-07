@@ -30,6 +30,8 @@ private:
 
 	TSharedPtr<class FOnlineSessionSearch> SessionSearch;
 
+	FString DesiredServerName;
+
 public:
 	virtual void Init() override;
 
@@ -40,7 +42,7 @@ public:
 	void LoadInGameMenu();
 
 protected:
-	virtual void HostButtonClicked() override;
+	virtual void HostButtonClicked(const FString &Name) override;
 
 	virtual void JoinButtonClicked(const FString &Address) override;
 
@@ -54,7 +56,7 @@ protected:
 
 private:
 	UFUNCTION(exec)
-	void Host(); 
+	void Host(const FString &Name); 
 
 	UFUNCTION(exec)
 	void Join(const FString &Address);

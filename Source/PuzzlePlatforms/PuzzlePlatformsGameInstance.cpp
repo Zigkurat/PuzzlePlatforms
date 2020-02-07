@@ -12,6 +12,7 @@
 #include "OnlineSessionSettings.h"
 
 const static FName SESSION_NAME = TEXT("New Session");
+const static FName SERVER_NAME_SETTINGS_KEY = TEXT("ServerNameKey");
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer &ObjectInitializer) {
     static ConstructorHelpers::FClassFinder<UUserWidget> MainMenuBPClass(TEXT("/Game/Menu/WBP_MainMenu"));
@@ -63,8 +64,8 @@ void UPuzzlePlatformsGameInstance::LoadInGameMenu() {
     }
 }
 
-void UPuzzlePlatformsGameInstance::HostButtonClicked() {
-    Host();
+void UPuzzlePlatformsGameInstance::HostButtonClicked(const FString &Name) {
+    Host(Name);
 }
 
 void UPuzzlePlatformsGameInstance::JoinButtonClicked(const FString &Address) {
@@ -102,8 +103,9 @@ void UPuzzlePlatformsGameInstance::RefreshServerList() {
     }
 }
 
-void UPuzzlePlatformsGameInstance::Host() {
+void UPuzzlePlatformsGameInstance::Host(const FString &Name) {
     if (SessionInterface.IsValid()) {
+        DesiredServerName = Name;
         auto ExistingSession = SessionInterface->GetNamedSession(SESSION_NAME);
         if (ExistingSession) {
             SessionInterface->DestroySession(SESSION_NAME);
@@ -147,6 +149,7 @@ void UPuzzlePlatformsGameInstance::CreateSession() {
         SessionSettings.NumPublicConnections = 2;
         SessionSettings.bShouldAdvertise = true;
         SessionSettings.bUsesPresence = true;
+        SessionSettings.Set(SERVER_NAME_SETTINGS_KEY, DesiredServerName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
         SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
     }
 }
@@ -180,10 +183,16 @@ void UPuzzlePlatformsGameInstance::OnFindSessionsComplete(bool Success) {
         TArray<FServerData> ServerList;
         for (const auto &SearchResult : SessionSearch->SearchResults) {
             FServerData ServerData;
-            ServerData.Name = SearchResult.GetSessionIdStr();
+            FString ServerName;
+            if (SearchResult.Session.SessionSettings.Get(SERVER_NAME_SETTINGS_KEY, ServerName)) {
+                ServerData.Name = ServerName;
+            } else {
+                ServerData.Name = SearchResult.GetSessionIdStr();
+            }
             ServerData.HostUsername = SearchResult.Session.OwningUserName;
             ServerData.MaxPlayers = SearchResult.Session.SessionSettings.NumPublicConnections;
             ServerData.CurrentPlayers = ServerData.MaxPlayers - SearchResult.Session.NumOpenPublicConnections;
+            
             ServerList.Add(ServerData);
         }
 

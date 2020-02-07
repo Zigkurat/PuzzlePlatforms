@@ -30,6 +30,9 @@ protected:
 	class UWidget *ServerListMenu;
 
 	UPROPERTY(meta = (BindWidget))
+	class UWidget *HostMenu;
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton *HostButton;
 
 	UPROPERTY(meta = (BindWidget))
@@ -55,6 +58,15 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	class UPanelWidget *ServerList;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton *HostHostMenuButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton *CancelHostMenuButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UEditableText *ServerNameTextBox;
 
 private:
 	TSubclassOf<class UUserWidget>  ServerListItemClass;
@@ -90,4 +102,10 @@ private:
 
 	UFUNCTION()
 	void CancelServerListMenuButtonClicked();
+
+	UFUNCTION()
+	void HostHostMenuButtonClicked();
+    
+	UFUNCTION()
+	void CancelHostMenuButtonClicked();
 };

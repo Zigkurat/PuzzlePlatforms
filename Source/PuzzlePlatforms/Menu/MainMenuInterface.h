@@ -18,7 +18,7 @@ class PUZZLEPLATFORMS_API IMainMenuInterface
 	GENERATED_BODY()
 
 public:
-	virtual void HostButtonClicked() = 0;
+	virtual void HostButtonClicked(const FString &Name) = 0;
 
 	virtual void JoinButtonClicked(const FString &Address) = 0;
 

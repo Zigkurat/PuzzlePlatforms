@@ -72,6 +72,12 @@ bool UMainMenu::Initialize() {
         if (CancelServerListMenuButton) {
             CancelServerListMenuButton->OnClicked.AddDynamic(this, &UMainMenu::CancelServerListMenuButtonClicked);
         }
+        if (HostHostMenuButton) {
+            HostHostMenuButton->OnClicked.AddDynamic(this, &UMainMenu::HostHostMenuButtonClicked);
+        }
+        if (CancelHostMenuButton) {
+            CancelHostMenuButton->OnClicked.AddDynamic(this, &UMainMenu::CancelHostMenuButtonClicked);
+        }
         return true;
     } else {
         return false;
@@ -79,8 +85,8 @@ bool UMainMenu::Initialize() {
 }
 
 void UMainMenu::HostButtonClicked() {
-    if (MenuInterface) {
-        MenuInterface->HostButtonClicked();
+    if (MenuSwitcher && HostMenu) {
+        MenuSwitcher->SetActiveWidget(HostMenu);
     }
 }
 
@@ -119,6 +125,18 @@ void UMainMenu::JoinServerListMenuButtonClicked() {
 }
 
 void UMainMenu::CancelServerListMenuButtonClicked() {
+    if (MenuSwitcher && MainMenu) {
+        MenuSwitcher->SetActiveWidget(MainMenu);
+    }
+}
+
+void UMainMenu::HostHostMenuButtonClicked() {
+    if (MenuInterface && ServerNameTextBox) {
+        MenuInterface->HostButtonClicked(ServerNameTextBox->GetText().ToString());
+    }
+}
+    
+void UMainMenu::CancelHostMenuButtonClicked() {
     if (MenuSwitcher && MainMenu) {
         MenuSwitcher->SetActiveWidget(MainMenu);
     }
