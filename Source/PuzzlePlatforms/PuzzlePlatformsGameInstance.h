@@ -41,6 +41,8 @@ public:
 	UFUNCTION(BlueprintCallable, exec)
 	void LoadInGameMenu();
 
+	void StartSession();
+
 protected:
 	virtual void HostButtonClicked(const FString &Name) override;
 

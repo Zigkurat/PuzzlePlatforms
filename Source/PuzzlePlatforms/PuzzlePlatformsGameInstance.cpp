@@ -11,7 +11,7 @@
 #include "OnlineSubsystem.h"
 #include "OnlineSessionSettings.h"
 
-const static FName SESSION_NAME = TEXT("New Session");
+const static FName SESSION_NAME = TEXT("Game");
 const static FName SERVER_NAME_SETTINGS_KEY = TEXT("ServerNameKey");
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer &ObjectInitializer) {
@@ -61,6 +61,12 @@ void UPuzzlePlatformsGameInstance::LoadInGameMenu() {
             InGameMenu->Setup();
             InGameMenu->SetMenuInterface(this);
         }
+    }
+}
+
+void UPuzzlePlatformsGameInstance::StartSession() {
+    if (SessionInterface.IsValid()) {
+        SessionInterface->StartSession(SESSION_NAME);
     }
 }
 
@@ -167,7 +173,7 @@ void UPuzzlePlatformsGameInstance::OnCreateSessionComplete(FName SessionName, bo
 
         UWorld *World = GetWorld();
         if (World) {
-            World->ServerTravel("/Game/Maps/Puzzle?listen");
+            World->ServerTravel("/Game/Maps/Lobby?listen");
         }
     }
 }
